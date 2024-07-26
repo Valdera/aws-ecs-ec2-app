@@ -1,0 +1,147 @@
+variable "application" {
+  type        = string
+  description = "The type of the application, supported types: go"
+  default     = "go"
+}
+
+variable "environment" {
+  type        = string
+  description = "The environment this service is being run"
+}
+
+variable "image_name" {
+  type        = string
+  description = "The image name of the application that will be deployed"
+}
+
+variable "image_version" {
+  type        = string
+  description = "The image version of the application that will be deployed."
+  default     = "latest"
+}
+
+variable "service_name" {
+  type        = string
+  description = "The name of the service."
+}
+
+variable "service_port" {
+  type        = string
+  default     = "8080"
+  description = "Port which service will be running"
+}
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name of the environment (e.g. miya.bikin2ai.cloud)"
+}
+
+variable "environment_variables" {
+  description = "List of environment variables to pass to the task"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "cross_account_role_arns" {
+  type        = list(string)
+  description = "ARNs to assume cross account role"
+  default     = []
+}
+
+variable "allowed_s3_bucket_arns" {
+  type        = list(string)
+  description = "List of S3 bucket which service is allowed to get/put."
+  default     = []
+}
+
+variable "allowed_to_receive_message_sqs_arns" {
+  type        = list(string)
+  description = "List of SQS ARNs which service is allowed to receive message."
+  default     = []
+}
+
+variable "allowed_to_send_message_sqs_arns" {
+  type        = list(string)
+  description = "List of SQS ARNs which service is allowed to send message."
+  default     = []
+}
+
+variable "allowed_to_use_cross_account_kms_arns" {
+  type        = list(string)
+  description = "List of other account's KMS ARNs which service is allowed to use."
+  default     = []
+}
+
+variable "allowed_to_publish_sns_topic_arns" {
+  type        = list(string)
+  description = "List of SNS ARNs which service is allowed to publish topics."
+  default     = []
+}
+
+variable "allowed_to_access_dynamodb_arns" {
+  type        = list(string)
+  description = "List of DynamoDB ARNs which service is allowed to use."
+  default     = []
+}
+
+variable "allowed_lambda_function_url_arns" {
+  type        = list(string)
+  description = "List of Lambda Function which service is allowed to invoke through FunctionURL."
+  default     = []
+}
+
+variable "additional_tags" {
+  type        = map(string)
+  description = "Additional tags that will be appendend to all resources tags."
+  default     = {}
+}
+
+variable "lb_additional_tags" {
+  type        = map(string)
+  description = "Additional tags that will be appendend to default LB tags."
+  default     = {}
+}
+
+variable "tg_additional_tags" {
+  type        = map(string)
+  description = "Additional tags that will be appendend to default target group tags."
+  default     = {}
+}
+
+variable "additional_trust_policy_principals" {
+  type = list(
+    object({
+      type        = string
+      identifiers = list(string)
+    })
+  )
+  description = <<-EOT
+    List of additional principals to be added in the trust policy.
+    Format: `{ type = <principal-type>, identifiers = [ <principal>, <principal> ] }`
+    Example:
+    ```hcl
+    [
+      {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+    ]
+    ```
+  EOT
+  default     = []
+}
+
+variable "read_only_root_filesystem" {
+  type        = bool
+  description = "Specifies whether to restrict filesystem access for this service."
+  default     = false
+}
+
+variable "ec2_instance_type" {
+  type        = string
+  description = "The instance type of the EC2 instance."
+  default     = "t3.micro"
+}
