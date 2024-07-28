@@ -2,6 +2,8 @@
   {
     "name": "${container_name}",
     "image": "${image_name}:${version}",
+    "cpu": ${app_cpu},
+    "memory": ${app_memory},
     "essential": true,
     "environment": ${environment},
     "dockerLabels": ${docker_labels},

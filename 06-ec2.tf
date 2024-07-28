@@ -19,10 +19,10 @@ data "aws_ami" "amazon_linux_2" {
   owners = ["amazon"]
 }
 
-resource "aws_launch_template" "ec2_launch_template" {
+resource "aws_launch_template" "ecs_launch_template" {
   name                   = "${local.service_name}-ec2-launch-template"
   image_id               = data.aws_ami.amazon_linux_2.id
-  instance_type          = local.ec2_instance_type
+  instance_type          = local.instance_type
   user_data              = base64encode(data.template_file.user_data.rendered)
   vpc_security_group_ids = [aws_security_group.ec2.id]
 

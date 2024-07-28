@@ -1,6 +1,61 @@
 #################
 # Common Policy #
 #################
+data "aws_iam_policy_document" "task_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+
+  dynamic "principals" {
+    for_each = var.additional_trust_policy_principals
+
+    content {
+      type        = principals.value.type
+      identifiers = principals.value.identifiers
+    }
+  }
+}
+
+data "aws_iam_policy_document" "parameter_store_readonly" {
+  statement {
+    sid       = "AllowDescribeParams"
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["ssm:DescribeParameters"]
+  }
+
+  statement {
+    sid    = "AllowReadUserParams"
+    effect = "Allow"
+
+    resources = [
+      // TODO: Change this to the correct SSM parameter ARN
+    ]
+
+    actions = [
+      "ssm:GetParameter*",
+    ]
+  }
+
+  statement {
+    sid    = "AllowDecryptDescribe"
+    effect = "Allow"
+
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt",
+    ]
+
+    resources = [
+      // TODO: Change this to the correct KMS key ARN
+    ]
+  }
+}
 
 data "aws_iam_policy_document" "cloudwatch_log_appender" {
   statement {
@@ -27,41 +82,19 @@ data "aws_iam_policy_document" "cloudwatch_log_appender" {
 # ECS Task Role #
 #################
 
-# ECS Task IAM Role
-
-data "aws_iam_policy_document" "ecs_task_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = [local.aws_service_name]
-    }
-
-    dynamic "principals" {
-      for_each = var.additional_trust_policy_principals
-
-      content {
-        type        = principals.value.type
-        identifiers = principals.value.identifiers
-      }
-    }
-  }
-}
-
 resource "aws_iam_role" "ecs_task_role" {
-  name        = "ServiceRoleForEcs_${var.service_name}-task"
-  path        = "/service-role/${local.aws_service_name}/"
-  description = "Service Role for ECS Task ${var.service_name}"
+  name        = "ServiceRoleForEcs_${local.service_name}-task"
+  path        = "/service-role/ecs-tasks.amazonaws.com/"
+  description = "Service Role for ECS Task ${local.service_name}"
 
-  assume_role_policy    = data.aws_iam_policy_document.ecs_task_role.json
+  assume_role_policy    = data.aws_iam_policy_document.task_assume_role_policy.json
   force_detach_policies = false
   max_session_duration  = 3600
 
   tags = merge(
     var.additional_tags,
     {
-      "Name"          = "ServiceRoleForEcs_${var.service_name}-task"
+      "Name"          = "ServiceRoleForEcs_${local.service_name}-task"
       "Environment"   = var.environment
       "Description"   = "Service Role for ECS Task ${var.service_name}"
       "ManagedBy"     = "Terraform"
@@ -69,7 +102,9 @@ resource "aws_iam_role" "ecs_task_role" {
   )
 }
 
-# ECS Task IAM Policy
+###################
+# ECS Task Policy #
+###################
 
 data "aws_iam_policy_document" "execute_command" {
   statement {
@@ -231,6 +266,144 @@ data "aws_iam_policy_document" "allow_function_url" {
 
     resources = var.allowed_lambda_function_url_arns
   }
+}
+
+resource "aws_iam_role_policy" "task_role_cloudwatch_log_appender" {
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.cloudwatch_log_appender.json
+}
+
+resource "aws_iam_role_policy" "task_role_parameter_store_readonly" {
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.parameter_store_readonly.json
+}
+
+resource "aws_iam_role_policy" "execute_command_policy" {
+  name   = "AllowExecuteCommand"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.execute_command.json
+}
+
+resource "aws_iam_role_policy_attachment" "common_be" {
+  role       = aws_iam_role.ecs_task_role
+  policy_arn = data.terraform_remote_state.common_be_policy.outputs.iam_policy_arn
+}
+
+resource "aws_iam_role_policy" "allow_assume_cross_account_role_policy" {
+  count = length(var.cross_account_role_arns) > 0 ? 1 : 0
+
+  name   = "AllowAssumeCrossAccountRole"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.allow_assume_cross_account_role[0].json
+}
+
+resource "aws_iam_role_policy" "allow_sqs_send_message_policy" {
+  count = length(var.allowed_to_send_message_sqs_arns) > 0 ? 1 : 0
+
+  name   = "AllowSQSSendMessage"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.sqs_allow_send_message[0].json
+}
+
+resource "aws_iam_role_policy" "allow_sqs_receive_message_policy" {
+  count = length(var.allowed_to_receive_message_sqs_arns) > 0 ? 1 : 0
+
+  name   = "AllowSQSReceiveMessage"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.sqs_allow_receive_message[0].json
+}
+
+resource "aws_iam_role_policy" "allow_use_cross_account_kms" {
+  count = length(var.allowed_to_use_cross_account_kms_arns) > 0 ? 1 : 0
+
+  name   = "AllowCrossAccountKMSUsage"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.cross_account_kms_allow_use[0].json
+}
+
+resource "aws_iam_role_policy" "allow_sns_publish_policy" {
+  count = length(var.allowed_to_publish_sns_topic_arns) > 0 ? 1 : 0
+
+  name   = "AllowSNSPublish"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.sns_allow_publish[0].json
+}
+
+resource "aws_iam_role_policy" "allow_s3_access_policy" {
+  count = length(var.allowed_s3_bucket_arns) > 0 ? 1 : 0
+
+  name   = "AllowS3Access"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.s3_allow_access[0].json
+}
+
+resource "aws_iam_role_policy" "allow_dynamodb_access_policy" {
+  count = length(var.allowed_to_access_dynamodb_arns) > 0 ? 1 : 0
+
+  name   = "AllowDynamoDBAccess"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.dynamodb_allow_access[0].json
+}
+
+resource "aws_iam_role_policy" "allow_function_url" {
+  count = length(var.allowed_lambda_function_url_arns) > 0 ? 1 : 0
+
+  name   = "AllowLambdaFunctionURLInvocation"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.allow_function_url[0].json
+}
+
+######################
+# ECS Execution Role #
+######################
+
+resource "aws_iam_role" "ecs_execution_role" {
+  name        = "ServiceRoleForEcs_${var.service_name}-execution"
+  assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "execution_role_base" {
+  statement {
+    sid       = "AllowToPullECRImage"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+    ]
+  }
+
+  statement {
+    sid    = "AllowLimitedPutEcsLog"
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = [
+      // TODO: Change this to the correct CloudWatch log group ARN
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "execution_role_base" {
+  role   = aws_iam_role.ecs_execution_role.name
+  policy = data.aws_iam_policy_document.execution_role_base.json
+}
+
+resource "aws_iam_role_policy" "execution_role_cloudwatch_log_appender" {
+  role   = aws_iam_role.ecs_execution_role.name
+  policy = data.aws_iam_policy_document.cloudwatch_log_appender.json
+}
+
+resource "aws_iam_role_policy" "execution_role_parameter_store_readonly" {
+  role   = aws_iam_role.ecs_execution_role.name
+  policy = data.aws_iam_policy_document.parameter_store_readonly.json
 }
 
 #####################

@@ -140,8 +140,139 @@ variable "read_only_root_filesystem" {
   default     = false
 }
 
-variable "ec2_instance_type" {
+variable "instance_type" {
   type        = string
   description = "The instance type of the EC2 instance."
   default     = "t3.micro"
+}
+
+#########################
+# ECS Autoscaling Group #
+#########################
+
+variable "task_max_capacity" {
+  type        = number
+  description = "The maximum number of tasks to run in the autoscaling group."
+  default     = 2
+}
+
+variable "task_min_capacity" {
+  type        = number
+  description = "The minimum number of tasks to run in the autoscaling group."
+  default     = 1
+}
+
+variable "vpc_zone_ids" {
+  type        = list(string)
+  description = "List of IDs of VPC zones to launch the autoscaling group in."
+}
+
+variable "protect_from_scale_in_enabled" {
+  type        = bool
+  description = "Whether or not to protect the autoscaling group from scale in."
+  default     = false
+}
+
+###############
+# ECS Cluster #
+###############
+
+variable "container_insight_enabled" {
+    description = "Enable container insights for the cluster."
+    type        = bool
+    default     = true
+}
+
+#########################
+# ECS Capacity Provider #
+#########################
+
+variable "managed_scaling" {
+  description = "Managed scaling configuration for the capacity provider."
+  type = object({
+    enabled   = bool
+    minimum_scaling_step_size = number
+    maximum_scaling_step_size = number
+  })
+  default = {
+    enabled   = false
+    minimum_scaling_step_size = 1
+    maximum_scaling_step_size = 1
+  }
+}
+
+###############
+# ECS Service #
+###############
+
+variable "task_desired_count" {
+  description = "Number of tasks to run in the service."
+  type        = string
+  default     = 2
+}
+
+variable "subnet_ids" {
+  description = "List of IDs of subnets to launch the service in."
+  type        = list(string)
+}
+
+variable "security_group_ids" {
+  description = "List of IDs of security groups to associate with the service."
+  type        = list(string)
+}
+
+variable "assign_public_ip" {
+  description = "Whether or not to assign public IP address to the task ENI."
+  type        = string
+  default     = false
+}
+
+variable "deployment_circuit_breaker" {
+  description = "Deployment circuit breaker configuration."
+  type = object({
+    enabled   = bool
+    rollback = bool
+  })
+  default = {
+    enabled   = true
+    rollback = true
+  }
+}
+
+variable "deployment_controller_type" {
+  description = "The deployment controller type to use for the service."
+  type        = string
+  default     = "ECS"
+}
+
+variable "execute_command_enabled" {
+  description = "Specifies whether to enable Amazon ECS Exec for the tasks within the service."
+  type        = bool
+  default     = false
+}
+
+############
+# ECS Task #
+############
+
+variable "app_cpu" {
+    description = "The number of CPU units used by the task."
+    type        = number
+    default     = 512
+}
+
+variable "app_memory" {
+    description = "The amount of memory (in MiB) used by the task."
+    type        = number
+    default     = 1024
+}
+
+###################
+# CloudWatch Logs #
+###################
+
+variable "log_retention_in_days" {
+    description = "The number of days to retain log events."
+    type        = number
+    default     = 14
 }
