@@ -97,7 +97,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     app_cpu        = local.app_cpu
     app_memory     = local.app_memory
     aws_region     = data.aws_region.current.name
-    container_name = local.cluster
+    container_name = "${local.service_name}-app"
     image_name     = local.image_name
     version        = local.image_version
     port           = local.service_port
@@ -112,11 +112,3 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   }
 }
 
-########################
-# Cloudwatch Log Group #
-########################
-
-resource "aws_cloudwatch_log_group" "log_group" {
-  name              = "/${local.cluster_role}-${var.application}/${var.service_name}"
-  retention_in_days = local.log_retention_in_days
-}

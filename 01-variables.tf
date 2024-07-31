@@ -1,3 +1,7 @@
+###############
+# Application #
+###############
+
 variable "application" {
   type        = string
   description = "The type of the application, supported types: go"
@@ -31,11 +35,6 @@ variable "service_port" {
   description = "Port which service will be running"
 }
 
-variable "domain_name" {
-  type        = string
-  description = "The domain name of the environment (e.g. miya.bikin2ai.cloud)"
-}
-
 variable "environment_variables" {
   description = "List of environment variables to pass to the task"
   type = list(object({
@@ -44,6 +43,10 @@ variable "environment_variables" {
   }))
   default = []
 }
+
+#####################
+# Additional Policy #
+#####################
 
 variable "cross_account_role_arns" {
   type        = list(string)
@@ -92,25 +95,6 @@ variable "allowed_lambda_function_url_arns" {
   description = "List of Lambda Function which service is allowed to invoke through FunctionURL."
   default     = []
 }
-
-variable "additional_tags" {
-  type        = map(string)
-  description = "Additional tags that will be appendend to all resources tags."
-  default     = {}
-}
-
-variable "lb_additional_tags" {
-  type        = map(string)
-  description = "Additional tags that will be appendend to default LB tags."
-  default     = {}
-}
-
-variable "tg_additional_tags" {
-  type        = map(string)
-  description = "Additional tags that will be appendend to default target group tags."
-  default     = {}
-}
-
 variable "additional_trust_policy_principals" {
   type = list(
     object({
@@ -134,11 +118,18 @@ variable "additional_trust_policy_principals" {
   default     = []
 }
 
-variable "read_only_root_filesystem" {
-  type        = bool
-  description = "Specifies whether to restrict filesystem access for this service."
-  default     = false
+###################
+# VPC Definitions #
+###################
+
+variable "vpc_id" {
+  type        = string
+  description = "The ID of the VPC."
 }
+
+################
+# EC2 Instance #
+################
 
 variable "instance_type" {
   type        = string
@@ -146,20 +137,26 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
+variable "read_only_root_filesystem" {
+  type        = bool
+  description = "Specifies whether to restrict filesystem access for this service."
+  default     = false
+}
+
 #########################
 # ECS Autoscaling Group #
 #########################
-
-variable "task_max_capacity" {
-  type        = number
-  description = "The maximum number of tasks to run in the autoscaling group."
-  default     = 2
-}
 
 variable "task_min_capacity" {
   type        = number
   description = "The minimum number of tasks to run in the autoscaling group."
   default     = 1
+}
+
+variable "task_max_capacity" {
+  type        = number
+  description = "The maximum number of tasks to run in the autoscaling group."
+  default     = 2
 }
 
 variable "vpc_zone_ids" {
@@ -219,6 +216,7 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   description = "List of IDs of security groups to associate with the service."
   type        = list(string)
+  default = []
 }
 
 variable "assign_public_ip" {
@@ -271,8 +269,24 @@ variable "app_memory" {
 # CloudWatch Logs #
 ###################
 
+variable "log_groups" {
+    description = "List of log groups to create."
+    type        = list(string)
+    default     = []
+}
+
 variable "log_retention_in_days" {
     description = "The number of days to retain log events."
     type        = number
     default     = 14
+}
+
+##########
+# Others #
+##########
+
+variable "additional_tags" {
+  type        = map(string)
+  description = "Additional tags that will be appendend to all resources tags."
+  default     = {}
 }
