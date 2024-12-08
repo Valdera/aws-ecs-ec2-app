@@ -27,7 +27,7 @@ resource "aws_launch_template" "ecs_launch_template" {
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
   iam_instance_profile {
-    arn = aws_iam_instance_profile.ec2_role_profile.arn
+    arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
   }
 
   monitoring {
@@ -39,6 +39,6 @@ data "template_file" "user_data" {
   template = file("user_data.sh")
 
   vars = {
-    ecs_cluster_name = aws_ecs_cluster.default.name
+    ecs_cluster_name = aws_ecs_cluster.ecs_cluster.name
   }
 }

@@ -34,25 +34,12 @@ data "aws_iam_policy_document" "parameter_store_readonly" {
     effect = "Allow"
 
     resources = [
-      // TODO: Change this to the correct SSM parameter ARN
+      "arn:aws:ssm:*:*:parameter/shared/*",
+      "arn:aws:ssm:*:*:parameter/${local.service_name}/*",
     ]
 
     actions = [
       "ssm:GetParameter*",
-    ]
-  }
-
-  statement {
-    sid    = "AllowDecryptDescribe"
-    effect = "Allow"
-
-    actions = [
-      "kms:DescribeKey",
-      "kms:Decrypt",
-    ]
-
-    resources = [
-      // TODO: Change this to the correct KMS key ARN
     ]
   }
 }
@@ -94,10 +81,10 @@ resource "aws_iam_role" "ecs_task_role" {
   tags = merge(
     local.additional_tags,
     {
-      "Name"          = "ServiceRoleForEcs_${local.service_name}-task"
-      "Environment"   = local.environment
-      "Description"   = "Service Role for ECS Task ${local.service_name}"
-      "ManagedBy"     = "Terraform"
+      "Name"        = "ServiceRoleForEcs_${local.service_name}-task"
+      "Environment" = local.environment
+      "Description" = "Service Role for ECS Task ${local.service_name}"
+      "ManagedBy"   = "Terraform"
     },
   )
 }
@@ -268,6 +255,29 @@ data "aws_iam_policy_document" "allow_function_url" {
   }
 }
 
+data "aws_iam_policy_document" "allow_to_use_kms" {
+  count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
+  statement {
+    sid    = "AllowDecryptDescribe"
+    effect = "Allow"
+
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt",
+    ]
+
+    resources = [
+      local.allowed_to_use_kms_arns
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "task_role_kms" {
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.allow_to_use_kms.json
+}
+
+
 resource "aws_iam_role_policy" "task_role_cloudwatch_log_appender" {
   role   = aws_iam_role.ecs_task_role
   policy = data.aws_iam_policy_document.cloudwatch_log_appender.json
@@ -282,11 +292,6 @@ resource "aws_iam_role_policy" "execute_command_policy" {
   name   = "AllowExecuteCommand"
   role   = aws_iam_role.ecs_task_role
   policy = data.aws_iam_policy_document.execute_command.json
-}
-
-resource "aws_iam_role_policy_attachment" "common_be" {
-  role       = aws_iam_role.ecs_task_role
-  policy_arn = data.terraform_remote_state.common_be_policy.outputs.iam_policy_arn
 }
 
 resource "aws_iam_role_policy" "allow_assume_cross_account_role_policy" {
@@ -358,7 +363,7 @@ resource "aws_iam_role_policy" "allow_function_url" {
 ######################
 
 resource "aws_iam_role" "ecs_execution_role" {
-  name        = "ServiceRoleForEcs_${local.service_name}-execution"
+  name               = "ServiceRoleForEcs_${local.service_name}-execution"
   assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
 }
 
@@ -411,7 +416,7 @@ resource "aws_iam_role_policy" "execution_role_parameter_store_readonly" {
 #####################
 
 resource "aws_iam_role" "ec2_instance_role" {
-  name               = "ServiceRoleForEc2_${local.service_name}-instance"
+  name        = "ServiceRoleForEc2_${local.service_name}-instance"
   description = "Service Role for EC2 Instance ${local.service_name}"
 
   assume_role_policy = data.aws_iam_policy_document.ec2_instance_role_policy.json
@@ -423,8 +428,8 @@ resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
 }
 
 resource "aws_iam_instance_profile" "ec2_instance_role_profile" {
-  name               = "InstanceProfileForEc2_${local.service_name}-instance"
-  role  = aws_iam_role.ec2_instance_role.id
+  name = "InstanceProfileForEc2_${local.service_name}-instance"
+  role = aws_iam_role.ec2_instance_role.id
 }
 
 data "aws_iam_policy_document" "ec2_instance_role_policy" {
@@ -433,7 +438,7 @@ data "aws_iam_policy_document" "ec2_instance_role_policy" {
     effect  = "Allow"
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "ec2.amazonaws.com",
         "ecs.amazonaws.com"

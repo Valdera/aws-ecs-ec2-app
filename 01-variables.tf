@@ -72,6 +72,12 @@ variable "allowed_to_send_message_sqs_arns" {
   default     = []
 }
 
+variable "allowed_to_use_kms_arns" {
+  type        = list(string)
+  description = "List of KMS ARNs which service is allowed to use."
+  default     = []
+}
+
 variable "allowed_to_use_cross_account_kms_arns" {
   type        = list(string)
   description = "List of other account's KMS ARNs which service is allowed to use."
@@ -121,6 +127,11 @@ variable "additional_trust_policy_principals" {
 ###################
 # VPC Definitions #
 ###################
+
+variable "alb_id" {
+  type        = string
+  description = "The ID of the ALB."
+}
 
 variable "vpc_id" {
   type        = string
@@ -175,9 +186,9 @@ variable "protect_from_scale_in_enabled" {
 ###############
 
 variable "container_insight_enabled" {
-    description = "Enable container insights for the cluster."
-    type        = bool
-    default     = true
+  description = "Enable container insights for the cluster."
+  type        = bool
+  default     = true
 }
 
 #########################
@@ -187,12 +198,12 @@ variable "container_insight_enabled" {
 variable "managed_scaling" {
   description = "Managed scaling configuration for the capacity provider."
   type = object({
-    enabled   = bool
+    enabled                   = bool
     minimum_scaling_step_size = number
     maximum_scaling_step_size = number
   })
   default = {
-    enabled   = false
+    enabled                   = false
     minimum_scaling_step_size = 1
     maximum_scaling_step_size = 1
   }
@@ -216,7 +227,7 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   description = "List of IDs of security groups to associate with the service."
   type        = list(string)
-  default = []
+  default     = []
 }
 
 variable "assign_public_ip" {
@@ -228,11 +239,11 @@ variable "assign_public_ip" {
 variable "deployment_circuit_breaker" {
   description = "Deployment circuit breaker configuration."
   type = object({
-    enabled   = bool
+    enabled  = bool
     rollback = bool
   })
   default = {
-    enabled   = true
+    enabled  = true
     rollback = true
   }
 }
@@ -254,15 +265,15 @@ variable "execute_command_enabled" {
 ############
 
 variable "app_cpu" {
-    description = "The number of CPU units used by the task."
-    type        = number
-    default     = 512
+  description = "The number of CPU units used by the task."
+  type        = number
+  default     = 512
 }
 
 variable "app_memory" {
-    description = "The amount of memory (in MiB) used by the task."
-    type        = number
-    default     = 1024
+  description = "The amount of memory (in MiB) used by the task."
+  type        = number
+  default     = 1024
 }
 
 ###################
@@ -270,15 +281,15 @@ variable "app_memory" {
 ###################
 
 variable "log_groups" {
-    description = "List of log groups to create."
-    type        = list(string)
-    default     = []
+  description = "List of log groups to create."
+  type        = list(string)
+  default     = []
 }
 
 variable "log_retention_in_days" {
-    description = "The number of days to retain log events."
-    type        = number
-    default     = 14
+  description = "The number of days to retain log events."
+  type        = number
+  default     = 14
 }
 
 ##########
