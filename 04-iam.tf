@@ -183,8 +183,8 @@ data "aws_iam_policy_document" "allow_s3_access" {
   count = length(local.allowed_to_access_s3_bucket_arns) > 0 ? 1 : 0
 
   statement {
-    sid     = "AllowListS3Bucket"
-    effect  = "Allow"
+    sid    = "AllowListS3Bucket"
+    effect = "Allow"
     actions = [
       "s3:ListBucket",
     ]
@@ -192,8 +192,8 @@ data "aws_iam_policy_document" "allow_s3_access" {
   }
 
   statement {
-    sid     = "AllowAccessS3object"
-    effect  = "Allow"
+    sid    = "AllowAccessS3object"
+    effect = "Allow"
     actions = [
       "s3:PutObject",
       "s3:GetObject",
@@ -210,8 +210,8 @@ data "aws_iam_policy_document" "allow_sns_publish" {
   count = length(local.allowed_to_publish_sns_topic_arns) > 0 ? 1 : 0
 
   statement {
-    sid     = "AllowPublishTopics"
-    effect  = "Allow"
+    sid    = "AllowPublishTopics"
+    effect = "Allow"
     actions = [
       "sns:ListTopics",
       "sns:Publish",
@@ -439,7 +439,7 @@ data "aws_iam_policy_document" "ec2_instance_role_policy" {
     effect  = "Allow"
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "ec2.amazonaws.com",
         "ecs.amazonaws.com"

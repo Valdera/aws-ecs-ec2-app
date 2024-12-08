@@ -33,8 +33,9 @@ locals {
   }
 
   // VPC
-  vpc_id = var.vpc_id
-  alb_id = var.alb_id
+  vpc_id         = var.vpc_id
+  alb_sg_ids     = var.alb_sg_ids
+  bastion_sg_ids = var.bastion_sg_ids
 
   // EC2 Instance
   instance_type             = var.instance_type
@@ -71,7 +72,7 @@ locals {
   cloudwatch_prefix     = "/app-${local.application}/${local.service_name}"
 
   // Others
-  common_tags     = merge(var.additional_tags, {
+  common_tags = merge(var.additional_tags, {
     Environment = local.environment
     ManagedBy   = "Terraform"
   })

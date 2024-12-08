@@ -85,7 +85,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | Additional tags that will be appendend to all resources tags. | `map(string)` | `{}` | no |
 | <a name="input_additional_trust_policy_principals"></a> [additional\_trust\_policy\_principals](#input\_additional\_trust\_policy\_principals) | List of additional principals to be added in the trust policy.<br/>Format: `{ type = <principal-type>, identifiers = [ <principal>, <principal> ] }`<br/>Example:<pre>hcl<br/>[<br/>  {<br/>    type        = "AWS"<br/>    identifiers = ["*"]<br/>  }<br/>]</pre> | <pre>list(<br/>    object({<br/>      type        = string<br/>      identifiers = list(string)<br/>    })<br/>  )</pre> | `[]` | no |
-| <a name="input_alb_id"></a> [alb\_id](#input\_alb\_id) | The ID of the ALB. | `string` | n/a | yes |
+| <a name="input_alb_sg_ids"></a> [alb\_sg\_ids](#input\_alb\_sg\_ids) | List of IDs of security groups to associate with the ALB. | `list(string)` | `[]` | no |
 | <a name="input_allowed_to_access_dynamodb_arns"></a> [allowed\_to\_access\_dynamodb\_arns](#input\_allowed\_to\_access\_dynamodb\_arns) | List of DynamoDB ARNs which service is allowed to use. | `list(string)` | `[]` | no |
 | <a name="input_allowed_to_access_s3_bucket_arns"></a> [allowed\_to\_access\_s3\_bucket\_arns](#input\_allowed\_to\_access\_s3\_bucket\_arns) | List of S3 bucket which service is allowed to get/put. | `list(string)` | `[]` | no |
 | <a name="input_allowed_to_assume_cross_account_role_arns"></a> [allowed\_to\_assume\_cross\_account\_role\_arns](#input\_allowed\_to\_assume\_cross\_account\_role\_arns) | List of cross account role ARNs which service is allowed to assume. | `list(string)` | `[]` | no |
@@ -99,6 +99,7 @@ No modules.
 | <a name="input_app_memory"></a> [app\_memory](#input\_app\_memory) | The amount of memory (in MiB) used by the task. | `number` | `1024` | no |
 | <a name="input_application"></a> [application](#input\_application) | The type of the application, supported types: go | `string` | `"go"` | no |
 | <a name="input_assign_public_ip"></a> [assign\_public\_ip](#input\_assign\_public\_ip) | Whether or not to assign public IP address to the task ENI. | `string` | `false` | no |
+| <a name="input_bastion_sg_ids"></a> [bastion\_sg\_ids](#input\_bastion\_sg\_ids) | List of IDs of security groups to associate with the bastion host. | `list(string)` | `[]` | no |
 | <a name="input_container_insight_enabled"></a> [container\_insight\_enabled](#input\_container\_insight\_enabled) | Enable container insights for the cluster. | `bool` | `true` | no |
 | <a name="input_deployment_circuit_breaker"></a> [deployment\_circuit\_breaker](#input\_deployment\_circuit\_breaker) | Deployment circuit breaker configuration. | <pre>object({<br/>    enabled  = bool<br/>    rollback = bool<br/>  })</pre> | <pre>{<br/>  "enabled": true,<br/>  "rollback": true<br/>}</pre> | no |
 | <a name="input_deployment_controller_type"></a> [deployment\_controller\_type](#input\_deployment\_controller\_type) | The deployment controller type to use for the service. | `string` | `"ECS"` | no |

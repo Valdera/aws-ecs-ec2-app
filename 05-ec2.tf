@@ -57,7 +57,15 @@ resource "aws_security_group" "ec2" {
     from_port       = 1024
     to_port         = 65535
     protocol        = "tcp"
-    security_groups = [local.alb_id]
+    security_groups = local.alb_sg_ids
+  }
+
+  ingress {
+    description     = "Allow ingress traffic from bastion hosts"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = local.bastion_sg_ids
   }
 
   egress {
@@ -67,4 +75,11 @@ resource "aws_security_group" "ec2" {
     protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(local.common_tags,
+    {
+      Name        = "${local.service_name}-ec2-sg"
+      Description = "Security group for EC2 instances in ECS cluster"
+    }
+  )
 }

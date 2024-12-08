@@ -128,9 +128,16 @@ variable "additional_trust_policy_principals" {
 # VPC Definitions #
 ###################
 
-variable "alb_id" {
-  type        = string
-  description = "The ID of the ALB."
+variable "alb_sg_ids" {
+  type        = list(string)
+  description = "List of IDs of security groups to associate with the ALB."
+  default     = []
+}
+
+variable "bastion_sg_ids" {
+  type        = list(string)
+  description = "List of IDs of security groups to associate with the bastion host."
+  default     = []
 }
 
 variable "vpc_id" {
