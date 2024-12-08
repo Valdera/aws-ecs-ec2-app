@@ -33,5 +33,4 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   lifecycle {
     create_before_destroy = true
   }
-
 }

@@ -48,13 +48,13 @@ variable "environment_variables" {
 # Additional Policy #
 #####################
 
-variable "cross_account_role_arns" {
+variable "allowed_to_assume_cross_account_role_arns" {
   type        = list(string)
-  description = "ARNs to assume cross account role"
+  description = "List of cross account role ARNs which service is allowed to assume."
   default     = []
 }
 
-variable "allowed_s3_bucket_arns" {
+variable "allowed_to_access_s3_bucket_arns" {
   type        = list(string)
   description = "List of S3 bucket which service is allowed to get/put."
   default     = []
@@ -96,7 +96,7 @@ variable "allowed_to_access_dynamodb_arns" {
   default     = []
 }
 
-variable "allowed_lambda_function_url_arns" {
+variable "allowed_to_invoke_lambda_function_url_arns" {
   type        = list(string)
   description = "List of Lambda Function which service is allowed to invoke through FunctionURL."
   default     = []

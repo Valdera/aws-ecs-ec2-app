@@ -79,12 +79,10 @@ resource "aws_iam_role" "ecs_task_role" {
   max_session_duration  = 3600
 
   tags = merge(
-    local.additional_tags,
+    local.common_tags,
     {
       "Name"        = "ServiceRoleForEcs_${local.service_name}-task"
-      "Environment" = local.environment
       "Description" = "Service Role for ECS Task ${local.service_name}"
-      "ManagedBy"   = "Terraform"
     },
   )
 }
@@ -112,7 +110,7 @@ data "aws_iam_policy_document" "execute_command" {
 }
 
 data "aws_iam_policy_document" "allow_assume_cross_account_role" {
-  count = length(local.cross_account_role_arns) > 0 ? 1 : 0
+  count = length(local.allowed_to_assume_cross_account_role_arns) > 0 ? 1 : 0
 
   statement {
     sid    = "AllowCrossAccountAssumeRole"
@@ -122,11 +120,11 @@ data "aws_iam_policy_document" "allow_assume_cross_account_role" {
       "sts:AssumeRole",
     ]
 
-    resources = local.cross_account_role_arns
+    resources = local.allowed_to_assume_cross_account_role_arns
   }
 }
 
-data "aws_iam_policy_document" "sqs_allow_send_message" {
+data "aws_iam_policy_document" "allow_sqs_send_message" {
   count = length(local.allowed_to_send_message_sqs_arns) > 0 ? 1 : 0
   statement {
     sid    = "AllowSendMessageSqs"
@@ -143,7 +141,7 @@ data "aws_iam_policy_document" "sqs_allow_send_message" {
   }
 }
 
-data "aws_iam_policy_document" "sqs_allow_receive_message" {
+data "aws_iam_policy_document" "allow_sqs_receive_message" {
   count = length(local.allowed_to_receive_message_sqs_arns) > 0 ? 1 : 0
   statement {
     sid    = "AllowReceiveMessageSqs"
@@ -162,7 +160,7 @@ data "aws_iam_policy_document" "sqs_allow_receive_message" {
   }
 }
 
-data "aws_iam_policy_document" "cross_account_kms_allow_use" {
+data "aws_iam_policy_document" "allow_cross_account_kms_use" {
   count = length(local.allowed_to_use_cross_account_kms_arns) > 0 ? 1 : 0
   statement {
     sid    = "AllowUseCrossAccountKMS"
@@ -181,21 +179,21 @@ data "aws_iam_policy_document" "cross_account_kms_allow_use" {
   }
 }
 
-data "aws_iam_policy_document" "s3_allow_access" {
-  count = length(local.allowed_s3_bucket_arns) > 0 ? 1 : 0
+data "aws_iam_policy_document" "allow_s3_access" {
+  count = length(local.allowed_to_access_s3_bucket_arns) > 0 ? 1 : 0
 
   statement {
-    sid    = "AllowListS3Bucket"
-    effect = "Allow"
+    sid     = "AllowListS3Bucket"
+    effect  = "Allow"
     actions = [
       "s3:ListBucket",
     ]
-    resources = local.allowed_s3_bucket_arns
+    resources = local.allowed_to_access_s3_bucket_arns
   }
 
   statement {
-    sid    = "AllowAccessS3object"
-    effect = "Allow"
+    sid     = "AllowAccessS3object"
+    effect  = "Allow"
     actions = [
       "s3:PutObject",
       "s3:GetObject",
@@ -204,16 +202,16 @@ data "aws_iam_policy_document" "s3_allow_access" {
       "s3:DeleteObjectVersion",
       "s3:GetEncryptionConfiguration",
     ]
-    resources = [for arn in local.allowed_s3_bucket_arns : "${arn}/*"]
+    resources = [for arn in local.allowed_to_access_s3_bucket_arns : "${arn}/*"]
   }
 }
 
-data "aws_iam_policy_document" "sns_allow_publish" {
+data "aws_iam_policy_document" "allow_sns_publish" {
   count = length(local.allowed_to_publish_sns_topic_arns) > 0 ? 1 : 0
 
   statement {
-    sid    = "AllowPublishTopics"
-    effect = "Allow"
+    sid     = "AllowPublishTopics"
+    effect  = "Allow"
     actions = [
       "sns:ListTopics",
       "sns:Publish",
@@ -222,7 +220,7 @@ data "aws_iam_policy_document" "sns_allow_publish" {
   }
 }
 
-data "aws_iam_policy_document" "dynamodb_allow_access" {
+data "aws_iam_policy_document" "allow_dynamodb_access" {
   count = length(local.allowed_to_access_dynamodb_arns) > 0 ? 1 : 0
 
   statement {
@@ -243,19 +241,19 @@ data "aws_iam_policy_document" "dynamodb_allow_access" {
   }
 }
 
-data "aws_iam_policy_document" "allow_function_url" {
-  count = length(local.allowed_lambda_function_url_arns) > 0 ? 1 : 0
+data "aws_iam_policy_document" "allow_lambda_function_url_invoke" {
+  count = length(local.allowed_to_invoke_lambda_function_url_arns) > 0 ? 1 : 0
   statement {
     sid    = "AllowInvokeLambdaFunctionURL"
     effect = "Allow"
 
     actions = ["lambda:InvokeFunctionUrl"]
 
-    resources = local.allowed_lambda_function_url_arns
+    resources = local.allowed_to_invoke_lambda_function_url_arns
   }
 }
 
-data "aws_iam_policy_document" "allow_to_use_kms" {
+data "aws_iam_policy_document" "allow_kms_use" {
   count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
   statement {
     sid    = "AllowDecryptDescribe"
@@ -274,7 +272,7 @@ data "aws_iam_policy_document" "allow_to_use_kms" {
 
 resource "aws_iam_role_policy" "task_role_kms" {
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.allow_to_use_kms.json
+  policy = data.aws_iam_policy_document.allow_kms_use.json
 }
 
 
@@ -295,7 +293,7 @@ resource "aws_iam_role_policy" "execute_command_policy" {
 }
 
 resource "aws_iam_role_policy" "allow_assume_cross_account_role_policy" {
-  count = length(local.cross_account_role_arns) > 0 ? 1 : 0
+  count = length(local.allowed_to_assume_cross_account_role_arns) > 0 ? 1 : 0
 
   name   = "AllowAssumeCrossAccountRole"
   role   = aws_iam_role.ecs_task_role
@@ -307,7 +305,7 @@ resource "aws_iam_role_policy" "allow_sqs_send_message_policy" {
 
   name   = "AllowSQSSendMessage"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.sqs_allow_send_message[0].json
+  policy = data.aws_iam_policy_document.allow_sqs_send_message[0].json
 }
 
 resource "aws_iam_role_policy" "allow_sqs_receive_message_policy" {
@@ -315,7 +313,7 @@ resource "aws_iam_role_policy" "allow_sqs_receive_message_policy" {
 
   name   = "AllowSQSReceiveMessage"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.sqs_allow_receive_message[0].json
+  policy = data.aws_iam_policy_document.allow_sqs_receive_message[0].json
 }
 
 resource "aws_iam_role_policy" "allow_use_cross_account_kms" {
@@ -323,7 +321,7 @@ resource "aws_iam_role_policy" "allow_use_cross_account_kms" {
 
   name   = "AllowCrossAccountKMSUsage"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.cross_account_kms_allow_use[0].json
+  policy = data.aws_iam_policy_document.allow_cross_account_kms_use[0].json
 }
 
 resource "aws_iam_role_policy" "allow_sns_publish_policy" {
@@ -331,15 +329,15 @@ resource "aws_iam_role_policy" "allow_sns_publish_policy" {
 
   name   = "AllowSNSPublish"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.sns_allow_publish[0].json
+  policy = data.aws_iam_policy_document.allow_sns_publish[0].json
 }
 
 resource "aws_iam_role_policy" "allow_s3_access_policy" {
-  count = length(local.allowed_s3_bucket_arns) > 0 ? 1 : 0
+  count = length(local.allowed_to_access_s3_bucket_arns) > 0 ? 1 : 0
 
   name   = "AllowS3Access"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.s3_allow_access[0].json
+  policy = data.aws_iam_policy_document.allow_s3_access[0].json
 }
 
 resource "aws_iam_role_policy" "allow_dynamodb_access_policy" {
@@ -347,15 +345,15 @@ resource "aws_iam_role_policy" "allow_dynamodb_access_policy" {
 
   name   = "AllowDynamoDBAccess"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.dynamodb_allow_access[0].json
+  policy = data.aws_iam_policy_document.allow_dynamodb_access[0].json
 }
 
 resource "aws_iam_role_policy" "allow_function_url" {
-  count = length(local.allowed_lambda_function_url_arns) > 0 ? 1 : 0
+  count = length(local.allowed_to_invoke_lambda_function_url_arns) > 0 ? 1 : 0
 
   name   = "AllowLambdaFunctionURLInvocation"
   role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.allow_function_url[0].json
+  policy = data.aws_iam_policy_document.allow_lambda_function_url_invoke[0].json
 }
 
 ######################
@@ -390,9 +388,12 @@ data "aws_iam_policy_document" "execution_role_base" {
       "logs:PutLogEvents",
     ]
 
-    resources = [
-      // TODO: Change this to the correct CloudWatch log group ARN
-    ]
+    resources = merge(
+      aws_cloudwatch_log_group.log_group_ecs.arn,
+      [
+        for k, v in aws_cloudwatch_log_group.log_group_apps : v.arn
+      ]
+    )
   }
 }
 
@@ -438,7 +439,7 @@ data "aws_iam_policy_document" "ec2_instance_role_policy" {
     effect  = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = [
         "ec2.amazonaws.com",
         "ecs.amazonaws.com"

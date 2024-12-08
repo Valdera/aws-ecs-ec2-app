@@ -52,7 +52,7 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   load_balancer {
-    target_group_arn = local.alb_target_group_arn
+    target_group_arn = data.aws_alb_target_group.this.arn
     container_name   = local.service_name
     container_port   = local.service_port
   }

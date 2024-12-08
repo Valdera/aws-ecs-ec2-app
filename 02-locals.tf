@@ -10,16 +10,16 @@ locals {
   short_environment = var.environment == "staging" ? "stg" : "prod"
 
   // Policy
-  cross_account_role_arns               = var.cross_account_role_arns
-  allowed_s3_bucket_arns                = var.allowed_s3_bucket_arns
-  allowed_to_receive_message_sqs_arns   = var.allowed_to_receive_message_sqs_arns
-  allowed_to_send_message_sqs_arns      = var.allowed_to_send_message_sqs_arns
-  allowed_to_use_cross_account_kms_arns = var.allowed_to_use_cross_account_kms_arns
-  allowed_to_publish_sns_topic_arns     = var.allowed_to_publish_sns_topic_arns
-  allowed_to_access_dynamodb_arns       = var.allowed_to_access_dynamodb_arns
-  allowed_lambda_function_url_arns      = var.allowed_lambda_function_url_arns
-  allowed_to_use_kms_arns               = var.allowed_to_use_kms_arns
-  additional_trust_policy_principals    = var.additional_trust_policy_principals
+  allowed_to_assume_cross_account_role_arns  = var.allowed_to_assume_cross_account_role_arns
+  allowed_to_access_s3_bucket_arns           = var.allowed_to_access_s3_bucket_arns
+  allowed_to_receive_message_sqs_arns        = var.allowed_to_receive_message_sqs_arns
+  allowed_to_send_message_sqs_arns           = var.allowed_to_send_message_sqs_arns
+  allowed_to_use_cross_account_kms_arns      = var.allowed_to_use_cross_account_kms_arns
+  allowed_to_publish_sns_topic_arns          = var.allowed_to_publish_sns_topic_arns
+  allowed_to_access_dynamodb_arns            = var.allowed_to_access_dynamodb_arns
+  allowed_to_invoke_lambda_function_url_arns = var.allowed_to_invoke_lambda_function_url_arns
+  allowed_to_use_kms_arns                    = var.allowed_to_use_kms_arns
+  additional_trust_policy_principals         = var.additional_trust_policy_principals
 
   // Image definitions
   image_name    = var.image_name
@@ -71,5 +71,8 @@ locals {
   cloudwatch_prefix     = "/app-${local.application}/${local.service_name}"
 
   // Others
-  additional_tags = var.additional_tags
+  common_tags     = merge(var.additional_tags, {
+    Environment = local.environment
+    ManagedBy   = "Terraform"
+  })
 }
