@@ -33,6 +33,13 @@ resource "aws_launch_template" "ecs_launch_template" {
   monitoring {
     enabled = true
   }
+
+  tags = merge(local.common_tags,
+    {
+      Name        = "${local.service_name}-ec2-launch-template"
+      Description = "Launch template for EC2 instances in ECS cluster"
+    }
+  )
 }
 
 data "template_file" "user_data" {

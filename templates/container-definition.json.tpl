@@ -1,7 +1,7 @@
 [
   {
     "name": "${container_name}",
-    "image": "${image_name}:${version}",
+    "image": "${image_uri}:${version}",
     "cpu": ${app_cpu},
     "memory": ${app_memory},
     "essential": true,

@@ -13,9 +13,9 @@ variable "environment" {
   description = "The environment this service is being run"
 }
 
-variable "image_name" {
+variable "image_uri" {
   type        = string
-  description = "The image name of the application that will be deployed"
+  description = "The image uri of the application that will be deployed"
 }
 
 variable "image_version" {
@@ -127,6 +127,11 @@ variable "additional_trust_policy_principals" {
 ###################
 # VPC Definitions #
 ###################
+
+variable "alb_id" {
+  type        = string
+  description = "The ID of the ALB."
+}
 
 variable "alb_sg_ids" {
   type        = list(string)

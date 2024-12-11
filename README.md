@@ -85,6 +85,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | Additional tags that will be appendend to all resources tags. | `map(string)` | `{}` | no |
 | <a name="input_additional_trust_policy_principals"></a> [additional\_trust\_policy\_principals](#input\_additional\_trust\_policy\_principals) | List of additional principals to be added in the trust policy.<br/>Format: `{ type = <principal-type>, identifiers = [ <principal>, <principal> ] }`<br/>Example:<pre>hcl<br/>[<br/>  {<br/>    type        = "AWS"<br/>    identifiers = ["*"]<br/>  }<br/>]</pre> | <pre>list(<br/>    object({<br/>      type        = string<br/>      identifiers = list(string)<br/>    })<br/>  )</pre> | `[]` | no |
+| <a name="input_alb_id"></a> [alb\_id](#input\_alb\_id) | The ID of the ALB. | `string` | n/a | yes |
 | <a name="input_alb_sg_ids"></a> [alb\_sg\_ids](#input\_alb\_sg\_ids) | List of IDs of security groups to associate with the ALB. | `list(string)` | `[]` | no |
 | <a name="input_allowed_to_access_dynamodb_arns"></a> [allowed\_to\_access\_dynamodb\_arns](#input\_allowed\_to\_access\_dynamodb\_arns) | List of DynamoDB ARNs which service is allowed to use. | `list(string)` | `[]` | no |
 | <a name="input_allowed_to_access_s3_bucket_arns"></a> [allowed\_to\_access\_s3\_bucket\_arns](#input\_allowed\_to\_access\_s3\_bucket\_arns) | List of S3 bucket which service is allowed to get/put. | `list(string)` | `[]` | no |
@@ -106,7 +107,7 @@ No modules.
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment this service is being run | `string` | n/a | yes |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | List of environment variables to pass to the task | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_execute_command_enabled"></a> [execute\_command\_enabled](#input\_execute\_command\_enabled) | Specifies whether to enable Amazon ECS Exec for the tasks within the service. | `bool` | `false` | no |
-| <a name="input_image_name"></a> [image\_name](#input\_image\_name) | The image name of the application that will be deployed | `string` | n/a | yes |
+| <a name="input_image_uri"></a> [image\_uri](#input\_image\_uri) | The image uri of the application that will be deployed | `string` | n/a | yes |
 | <a name="input_image_version"></a> [image\_version](#input\_image\_version) | The image version of the application that will be deployed. | `string` | `"latest"` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type of the EC2 instance. | `string` | `"t3.micro"` | no |
 | <a name="input_log_groups"></a> [log\_groups](#input\_log\_groups) | List of log groups to create. | `list(string)` | `[]` | no |

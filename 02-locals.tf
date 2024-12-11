@@ -22,7 +22,7 @@ locals {
   additional_trust_policy_principals         = var.additional_trust_policy_principals
 
   // Image definitions
-  image_name    = var.image_name
+  image_uri     = var.image_uri
   image_version = var.image_version
   docker_labels = {
     ACCOUNT_ID   = data.aws_caller_identity.current.account_id
@@ -34,6 +34,7 @@ locals {
 
   // VPC
   vpc_id         = var.vpc_id
+  alb_id         = var.alb_id
   alb_sg_ids     = var.alb_sg_ids
   bastion_sg_ids = var.bastion_sg_ids
 

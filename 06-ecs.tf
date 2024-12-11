@@ -9,6 +9,11 @@ resource "aws_ecs_cluster" "ecs_cluster" {
     name  = "containerInsights"
     value = local.container_insight_enabled
   }
+
+  tags = {
+    Name        = "${local.service_name}-ecs-cluster"
+    Description = "ECS cluster for ${local.service_name}"
+  }
 }
 
 resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
@@ -24,6 +29,11 @@ resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
       status                    = local.managed_scaling.enabled ? "ENABLED" : "DISABLED"
     }
   }
+
+  tags = merge(local.common_tags, {
+    Name        = "${local.service_name}-ecs-capacity-provider"
+    Description = "Capacity provider for ${local.service_name} ECS cluster"
+  })
 }
 
 resource "aws_ecs_cluster_capacity_providers" "ecs_capacity_provider" {
@@ -79,6 +89,11 @@ resource "aws_ecs_service" "ecs_service" {
       launch_type
     ]
   }
+
+  tags = merge(local.common_tags, {
+    Name        = "${local.service_name}-ecs-service"
+    Description = "ECS service for ${local.service_name}"
+  })
 }
 
 ########################
@@ -98,7 +113,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     app_memory                = local.app_memory
     aws_region                = data.aws_region.current.name
     container_name            = "${local.service_name}-app"
-    image_name                = local.image_name
+    image_uri                 = local.image_uri
     version                   = local.image_version
     port                      = local.service_port
     log_group                 = aws_cloudwatch_log_group.log_group_ecs.name
@@ -110,5 +125,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = merge(local.common_tags, {
+    Name        = "${local.service_name}-ecs-task-definition"
+    Description = "ECS task definition for ${local.service_name}"
+  })
 }
 
