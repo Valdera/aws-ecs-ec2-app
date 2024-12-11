@@ -56,7 +56,7 @@ resource "aws_security_group" "ec2" {
     from_port       = 1024
     to_port         = 65535
     protocol        = "tcp"
-    security_groups = local.alb_sg_ids
+    security_groups = [local.alb_security_group_id]
   }
 
   ingress {
@@ -64,7 +64,7 @@ resource "aws_security_group" "ec2" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = local.bastion_sg_ids
+    security_groups = local.bastion_security_group_id != null ? [local.bastion_security_group_id] : []
   }
 
   egress {

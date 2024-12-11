@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   max_size              = local.task_max_capacity
   min_size              = local.task_min_capacity
   vpc_zone_identifier   = local.subnet_ids
-  health_check_type     = local.alb_sg_ids != [] ? "ELB" : "EC2"
+  health_check_type     = "ELB"
   protect_from_scale_in = local.protect_from_scale_in_enabled
 
   enabled_metrics = [
@@ -33,9 +33,4 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   lifecycle {
     create_before_destroy = true
   }
-
-  tags = merge(local.common_tags, {
-    Name        = "${local.service_name}-ecs-asg"
-    Description = "Autoscaling group for ${local.service_name} EC2 instances"
-  })
 }

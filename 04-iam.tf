@@ -9,14 +9,14 @@ data "aws_iam_policy_document" "task_assume_role_policy" {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
-  }
 
-  dynamic "principals" {
-    for_each = local.additional_trust_policy_principals
+    dynamic "principals" {
+      for_each = local.additional_trust_policy_principals
 
-    content {
-      type        = principals.value.type
-      identifiers = principals.value.identifiers
+      content {
+        type        = principals.value.type
+        identifiers = principals.value.identifiers
+      }
     }
   }
 }
@@ -264,9 +264,7 @@ data "aws_iam_policy_document" "allow_kms_use" {
       "kms:Decrypt",
     ]
 
-    resources = [
-      local.allowed_to_use_kms_arns
-    ]
+    resources = local.allowed_to_use_kms_arns
   }
 }
 

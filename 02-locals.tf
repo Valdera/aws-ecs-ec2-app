@@ -33,10 +33,10 @@ locals {
   }
 
   // VPC
-  vpc_id         = var.vpc_id
-  alb_id         = var.alb_id
-  alb_sg_ids     = var.alb_sg_ids
-  bastion_sg_ids = var.bastion_sg_ids
+  vpc_id                    = var.vpc_id
+  alb_target_group_arn      = var.alb_target_group_arn
+  alb_security_group_id     = var.alb_security_group_id
+  bastion_security_group_id = var.bastion_security_group_id
 
   // EC2 Instance
   instance_type             = var.instance_type
