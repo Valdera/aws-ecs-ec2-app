@@ -26,7 +26,6 @@ locals {
   image_version = var.image_version
   docker_labels = {
     ACCOUNT_ID   = data.aws_caller_identity.current.account_id
-    ACCOUNT_NAME = data.aws_iam_account_alias.current.account_alias
     ENVIRONMENT  = var.environment
     CLUSTER      = "${local.service_name}-app"
     SERVICE_NAME = local.service_name
