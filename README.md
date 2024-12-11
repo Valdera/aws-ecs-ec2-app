@@ -123,7 +123,25 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_ami_id"></a> [ami\_id](#output\_ami\_id) | The ID of the AMI |
+| <a name="output_asg_arn"></a> [asg\_arn](#output\_asg\_arn) | The ARN of the ECS autoscaling group |
+| <a name="output_asg_id"></a> [asg\_id](#output\_asg\_id) | The ID of the ECS autoscaling group |
+| <a name="output_ecs_capacity_provider_arn"></a> [ecs\_capacity\_provider\_arn](#output\_ecs\_capacity\_provider\_arn) | The ARN of the ECS capacity provider |
+| <a name="output_ecs_capacity_provider_id"></a> [ecs\_capacity\_provider\_id](#output\_ecs\_capacity\_provider\_id) | The ID of the ECS capacity provider |
+| <a name="output_ecs_capacity_provider_name"></a> [ecs\_capacity\_provider\_name](#output\_ecs\_capacity\_provider\_name) | The name of the ECS capacity provider |
+| <a name="output_ecs_cluster_arn"></a> [ecs\_cluster\_arn](#output\_ecs\_cluster\_arn) | The ARN of the ECS cluster |
+| <a name="output_ecs_cluster_id"></a> [ecs\_cluster\_id](#output\_ecs\_cluster\_id) | The ID of the ECS cluster |
+| <a name="output_ecs_cluster_name"></a> [ecs\_cluster\_name](#output\_ecs\_cluster\_name) | The name of the ECS cluster |
+| <a name="output_ecs_service_id"></a> [ecs\_service\_id](#output\_ecs\_service\_id) | The ID of the ECS service |
+| <a name="output_ecs_service_name"></a> [ecs\_service\_name](#output\_ecs\_service\_name) | The name of the ECS service |
+| <a name="output_ecs_task_definition_arn"></a> [ecs\_task\_definition\_arn](#output\_ecs\_task\_definition\_arn) | The ARN of the ECS task definition |
+| <a name="output_execution_role_arn"></a> [execution\_role\_arn](#output\_execution\_role\_arn) | The ARN of the ECS task execution role |
+| <a name="output_execution_role_id"></a> [execution\_role\_id](#output\_execution\_role\_id) | The ID of the ECS task execution role |
+| <a name="output_launch_template_id"></a> [launch\_template\_id](#output\_launch\_template\_id) | The ID of the EC2 launch template |
+| <a name="output_sg_ec2_arn"></a> [sg\_ec2\_arn](#output\_sg\_ec2\_arn) | The ARN of the EC2 security group |
+| <a name="output_sg_ec2_id"></a> [sg\_ec2\_id](#output\_sg\_ec2\_id) | The ID of the EC2 security group |
 <!-- END_TF_DOCS -->
 
 ## Configurations
