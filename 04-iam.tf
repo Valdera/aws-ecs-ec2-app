@@ -269,6 +269,8 @@ data "aws_iam_policy_document" "allow_kms_use" {
 }
 
 resource "aws_iam_role_policy" "task_role_kms" {
+  count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
+
   role   = aws_iam_role.ecs_task_role
   policy = data.aws_iam_policy_document.allow_kms_use.json
 }
