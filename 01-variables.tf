@@ -182,11 +182,6 @@ variable "task_max_capacity" {
   default     = 2
 }
 
-variable "vpc_zone_ids" {
-  type        = list(string)
-  description = "List of IDs of VPC zones to launch the autoscaling group in."
-}
-
 variable "protect_from_scale_in_enabled" {
   type        = bool
   description = "Whether or not to protect the autoscaling group from scale in."

@@ -45,7 +45,6 @@ locals {
   // ECS Autoscaling Group
   task_min_capacity             = var.task_min_capacity
   task_max_capacity             = var.task_max_capacity
-  vpc_zone_ids                  = var.vpc_zone_ids
   protect_from_scale_in_enabled = var.protect_from_scale_in_enabled
 
   // ECS Cluster

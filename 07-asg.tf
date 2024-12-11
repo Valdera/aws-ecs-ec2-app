@@ -6,7 +6,7 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   name                  = "${local.service_name}-ecs-asg"
   max_size              = local.task_max_capacity
   min_size              = local.task_min_capacity
-  vpc_zone_identifier   = local.vpc_zone_ids
+  vpc_zone_identifier   = local.subnet_ids
   health_check_type     = local.alb_sg_ids != [] ? "ELB" : "EC2"
   protect_from_scale_in = local.protect_from_scale_in_enabled
 
