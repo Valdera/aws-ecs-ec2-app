@@ -390,7 +390,7 @@ data "aws_iam_policy_document" "execution_role_base" {
       "logs:PutLogEvents",
     ]
 
-    resources = merge(
+    resources = concat(
       [aws_cloudwatch_log_group.log_group_ecs.arn],
       [
         for k, v in aws_cloudwatch_log_group.log_group_apps : v.arn
