@@ -268,15 +268,6 @@ data "aws_iam_policy_document" "allow_kms_use" {
   }
 }
 
-resource "aws_iam_role_policy" "task_role_kms" {
-  count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
-
-  name   = "AllowKMSUsage"
-  role   = aws_iam_role.ecs_task_role
-  policy = data.aws_iam_policy_document.allow_kms_use.json
-}
-
-
 resource "aws_iam_role_policy" "task_role_cloudwatch_log_appender" {
   name   = "AllowCloudWatchLogAppender"
   role   = aws_iam_role.ecs_task_role
@@ -293,6 +284,14 @@ resource "aws_iam_role_policy" "execute_command_policy" {
   name   = "AllowExecuteCommand"
   role   = aws_iam_role.ecs_task_role
   policy = data.aws_iam_policy_document.execute_command.json
+}
+
+resource "aws_iam_role_policy" "task_role_kms" {
+  count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
+
+  name   = "AllowKMSUsage"
+  role   = aws_iam_role.ecs_task_role
+  policy = data.aws_iam_policy_document.allow_kms_use[0].json
 }
 
 resource "aws_iam_role_policy" "allow_assume_cross_account_role_policy" {
