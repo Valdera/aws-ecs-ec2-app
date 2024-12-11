@@ -7,13 +7,13 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
   setting {
     name  = "containerInsights"
-    value = local.container_insight_enabled
+    value = local.container_insight_enabled ? "enabled" : "disabled"
   }
 
-  tags = {
+  tags = merge(local.common_tags, {
     Name        = "${local.service_name}-ecs-cluster"
     Description = "ECS cluster for ${local.service_name}"
-  }
+  })
 }
 
 resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
