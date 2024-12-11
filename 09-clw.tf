@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "log_group_ecs" {
 }
 
 resource "aws_cloudwatch_log_group" "log_group_apps" {
-  for_each = local.log_groups
+  for_each = toset(local.log_groups)
 
   name              = "${local.cloudwatch_prefix}/${each.value}"
   retention_in_days = var.log_retention_in_days
