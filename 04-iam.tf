@@ -270,19 +270,19 @@ data "aws_iam_policy_document" "allow_kms_use" {
 
 resource "aws_iam_role_policy" "task_role_cloudwatch_log_appender" {
   name   = "AllowCloudWatchLogAppender"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.cloudwatch_log_appender.json
 }
 
 resource "aws_iam_role_policy" "task_role_parameter_store_readonly" {
   name   = "AllowParameterStoreReadonly"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.parameter_store_readonly.json
 }
 
 resource "aws_iam_role_policy" "execute_command_policy" {
   name   = "AllowExecuteCommand"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.execute_command.json
 }
 
@@ -290,7 +290,7 @@ resource "aws_iam_role_policy" "task_role_kms" {
   count = length(local.allowed_to_use_kms_arns) > 0 ? 1 : 0
 
   name   = "AllowKMSUsage"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_kms_use[0].json
 }
 
@@ -298,7 +298,7 @@ resource "aws_iam_role_policy" "allow_assume_cross_account_role_policy" {
   count = length(local.allowed_to_assume_cross_account_role_arns) > 0 ? 1 : 0
 
   name   = "AllowAssumeCrossAccountRole"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_assume_cross_account_role[0].json
 }
 
@@ -306,7 +306,7 @@ resource "aws_iam_role_policy" "allow_sqs_send_message_policy" {
   count = length(local.allowed_to_send_message_sqs_arns) > 0 ? 1 : 0
 
   name   = "AllowSQSSendMessage"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_sqs_send_message[0].json
 }
 
@@ -314,7 +314,7 @@ resource "aws_iam_role_policy" "allow_sqs_receive_message_policy" {
   count = length(local.allowed_to_receive_message_sqs_arns) > 0 ? 1 : 0
 
   name   = "AllowSQSReceiveMessage"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_sqs_receive_message[0].json
 }
 
@@ -322,7 +322,7 @@ resource "aws_iam_role_policy" "allow_use_cross_account_kms" {
   count = length(local.allowed_to_use_cross_account_kms_arns) > 0 ? 1 : 0
 
   name   = "AllowCrossAccountKMSUsage"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_cross_account_kms_use[0].json
 }
 
@@ -330,7 +330,7 @@ resource "aws_iam_role_policy" "allow_sns_publish_policy" {
   count = length(local.allowed_to_publish_sns_topic_arns) > 0 ? 1 : 0
 
   name   = "AllowSNSPublish"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_sns_publish[0].json
 }
 
@@ -338,7 +338,7 @@ resource "aws_iam_role_policy" "allow_s3_access_policy" {
   count = length(local.allowed_to_access_s3_bucket_arns) > 0 ? 1 : 0
 
   name   = "AllowS3Access"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_s3_access[0].json
 }
 
@@ -346,7 +346,7 @@ resource "aws_iam_role_policy" "allow_dynamodb_access_policy" {
   count = length(local.allowed_to_access_dynamodb_arns) > 0 ? 1 : 0
 
   name   = "AllowDynamoDBAccess"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_dynamodb_access[0].json
 }
 
@@ -354,7 +354,7 @@ resource "aws_iam_role_policy" "allow_function_url" {
   count = length(local.allowed_to_invoke_lambda_function_url_arns) > 0 ? 1 : 0
 
   name   = "AllowLambdaFunctionURLInvocation"
-  role   = aws_iam_role.ecs_task_role
+  role   = aws_iam_role.ecs_task_role.id
   policy = data.aws_iam_policy_document.allow_lambda_function_url_invoke[0].json
 }
 
@@ -391,7 +391,7 @@ data "aws_iam_policy_document" "execution_role_base" {
     ]
 
     resources = merge(
-      aws_cloudwatch_log_group.log_group_ecs.arn,
+      [aws_cloudwatch_log_group.log_group_ecs.arn],
       [
         for k, v in aws_cloudwatch_log_group.log_group_apps : v.arn
       ]
