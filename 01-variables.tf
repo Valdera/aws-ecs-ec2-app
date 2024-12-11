@@ -101,6 +101,7 @@ variable "allowed_to_invoke_lambda_function_url_arns" {
   description = "List of Lambda Function which service is allowed to invoke through FunctionURL."
   default     = []
 }
+
 variable "additional_trust_policy_principals" {
   type = list(
     object({
@@ -281,6 +282,12 @@ variable "app_memory" {
   description = "The amount of memory (in MiB) used by the task."
   type        = number
   default     = 1024
+}
+
+variable "user_data_path" {
+  description = "Path to the user data script."
+  type        = string
+  default     = ""
 }
 
 ###################

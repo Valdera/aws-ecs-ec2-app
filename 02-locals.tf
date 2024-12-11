@@ -41,6 +41,7 @@ locals {
   // EC2 Instance
   instance_type             = var.instance_type
   read_only_root_filesystem = var.read_only_root_filesystem
+  user_data_path            = var.user_data_path
 
   // ECS Autoscaling Group
   task_min_capacity             = var.task_min_capacity

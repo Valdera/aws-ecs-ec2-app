@@ -23,7 +23,7 @@ resource "aws_launch_template" "ecs_launch_template" {
   name                   = "${local.service_name}-ec2-launch-template"
   image_id               = data.aws_ami.amazon_linux_2.id
   instance_type          = local.instance_type
-  user_data              = base64encode(data.template_file.user_data.rendered)
+  user_data              = local.user_data_path != "" ? filebase64("${path.module}/user-data.sh") : null
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
   iam_instance_profile {
@@ -40,14 +40,6 @@ resource "aws_launch_template" "ecs_launch_template" {
       Description = "Launch template for EC2 instances in ECS cluster"
     }
   )
-}
-
-data "template_file" "user_data" {
-  template = file("./scripts/user_data.sh")
-
-  vars = {
-    ecs_cluster_name = aws_ecs_cluster.ecs_cluster.name
-  }
 }
 
 ######################
