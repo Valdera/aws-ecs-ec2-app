@@ -397,6 +397,22 @@ data "aws_iam_policy_document" "execution_role_base" {
       ]
     )
   }
+
+  statement {
+    sid    = "AllowRegisterELBTargetGroup"
+    effect = "Allow"
+
+    actions = [
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:RegisterTargets",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeTargetHealth"
+    ]
+
+    resources = [local.alb_target_group_arn]
+  }
 }
 
 resource "aws_iam_role_policy" "execution_role_base" {
