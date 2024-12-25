@@ -21,7 +21,7 @@ resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_autoscaling_group.arn
-    managed_termination_protection = "ENABLED"
+    managed_termination_protection = local.managed_scaling.enabled ? "ENABLED" : "DISABLED"
 
     managed_scaling {
       minimum_scaling_step_size = local.managed_scaling.minimum_scaling_step_size
