@@ -4,8 +4,8 @@
 
 variable "application" {
   type        = string
-  description = "The type of the application, supported types: go"
-  default     = "go"
+  description = "The type of the application, supported types: java"
+  default     = "java"
 }
 
 variable "environment" {

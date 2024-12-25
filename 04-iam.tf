@@ -413,6 +413,18 @@ data "aws_iam_policy_document" "execution_role_base" {
 
     resources = [local.alb_target_group_arn]
   }
+
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "ecs.amazonaws.com"
+      ]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "execution_role_base" {
