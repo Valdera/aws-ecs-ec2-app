@@ -63,7 +63,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   load_balancer {
     target_group_arn = local.alb_target_group_arn
-    container_name   = local.service_name
+    container_name   = local.container_name
     container_port   = local.service_port
   }
 
@@ -112,7 +112,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     app_cpu                   = local.app_cpu
     app_memory                = local.app_memory
     aws_region                = data.aws_region.current.name
-    container_name            = "${local.service_name}-app"
+    container_name            = local.container_name
     image_uri                 = local.image_uri
     version                   = local.image_version
     port                      = local.service_port
