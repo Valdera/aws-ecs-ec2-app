@@ -365,6 +365,14 @@ resource "aws_iam_role_policy" "allow_function_url" {
 resource "aws_iam_role" "ecs_execution_role" {
   name               = "ServiceRoleForEcs_${local.service_name}-execution"
   assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name"        = "ServiceRoleForEcs_${local.service_name}-execution"
+      "Description" = "Service Role for ECS Execution ${local.service_name}"
+    },
+  )
 }
 
 data "aws_iam_policy_document" "execution_role_base" {
