@@ -447,6 +447,14 @@ resource "aws_iam_role" "ec2_instance_role" {
   description = "Service Role for EC2 Instance ${local.service_name}"
 
   assume_role_policy = data.aws_iam_policy_document.ec2_instance_role_policy.json
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name"        = "ServiceRoleForEc2_${local.service_name}-instance"
+      "Description" = "Service Role for EC2 Instance ${local.service_name}"
+    },
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
