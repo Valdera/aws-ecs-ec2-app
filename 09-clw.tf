@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "log_group_ecs" {
   tags = merge(local.common_tags,
     {
       Name        = "${local.service_name}-ecs-cluster"
-      Description = "Log group for ECS cluster"
+      Description = "Log group for ECS cluster ${local.service_name}"
     }
   )
 }
