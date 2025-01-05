@@ -25,6 +25,7 @@ resource "aws_launch_template" "ecs_launch_template" {
   instance_type          = local.instance_type
   user_data              = base64encode("#!/bin/bash\necho \"ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name}\" >> /etc/ecs/ecs.config\n")
   vpc_security_group_ids = [aws_security_group.ec2.id]
+  update_default_version = true
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
