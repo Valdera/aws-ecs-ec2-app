@@ -23,7 +23,7 @@ resource "aws_launch_template" "ecs_launch_template" {
   name                   = "${local.service_name}-ec2-launch-template"
   image_id               = data.aws_ami.amazon_linux_2.id
   instance_type          = local.instance_type
-  user_data              = local.user_data_path != "" ? filebase64("${path.module}/user-data.sh") : null
+  user_data              = base64encode("#!/bin/bash\necho \"ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name}\" >> /etc/ecs/ecs.config\n")
   vpc_security_group_ids = [aws_security_group.ec2.id]
 
   iam_instance_profile {
