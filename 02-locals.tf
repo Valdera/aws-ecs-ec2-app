@@ -6,6 +6,7 @@ locals {
   container_name        = "${var.service_name}-app"
   service_port          = var.service_port
   environment_variables = var.environment_variables
+  health_check_path     = var.health_check_path
 
   environment       = var.environment
   short_environment = var.environment == "staging" ? "stg" : "prod"

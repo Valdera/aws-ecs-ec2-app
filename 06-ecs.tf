@@ -122,6 +122,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     environment               = jsonencode(var.environment_variables)
     docker_labels             = jsonencode(local.docker_labels)
     read_only_root_filesystem = local.read_only_root_filesystem
+    health_check_path         = local.health_check_path
   })
 
   lifecycle {

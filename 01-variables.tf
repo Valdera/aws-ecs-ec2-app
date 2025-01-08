@@ -35,6 +35,12 @@ variable "service_port" {
   description = "Port which service will be running"
 }
 
+variable "health_check_path" {
+  type        = string
+  description = "The path to the health check endpoint."
+  default     = "/health"
+}
+
 variable "environment_variables" {
   description = "List of environment variables to pass to the task"
   type = list(object({
