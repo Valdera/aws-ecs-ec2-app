@@ -27,6 +27,8 @@ resource "aws_launch_template" "ecs_launch_template" {
   vpc_security_group_ids = [aws_security_group.ec2.id]
   update_default_version = true
 
+  key_name = local.key_name
+
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_instance_role_profile.arn
   }
