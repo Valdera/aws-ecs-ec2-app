@@ -297,7 +297,6 @@ variable "app_memory" {
 variable "user_data_path" {
   description = "Path to the user data script."
   type        = string
-  default     = ""
 }
 
 ###################
