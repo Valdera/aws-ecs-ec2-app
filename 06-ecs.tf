@@ -52,6 +52,10 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count          = local.task_desired_count
   enable_execute_command = local.execute_command_enabled
 
+  propagate_tags          = "TASK_DEFINITION"
+  enable_ecs_managed_tags = true
+
+
   deployment_circuit_breaker {
     enable   = local.deployment_circuit_breaker.enabled
     rollback = local.deployment_circuit_breaker.rollback
