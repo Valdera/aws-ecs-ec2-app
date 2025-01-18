@@ -294,11 +294,6 @@ variable "app_memory" {
   default     = 1024
 }
 
-variable "user_data_path" {
-  description = "Path to the user data script."
-  type        = string
-}
-
 ###################
 # CloudWatch Logs #
 ###################
