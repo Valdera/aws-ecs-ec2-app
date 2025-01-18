@@ -55,7 +55,6 @@ resource "aws_ecs_service" "ecs_service" {
   propagate_tags          = "TASK_DEFINITION"
   enable_ecs_managed_tags = true
 
-
   deployment_circuit_breaker {
     enable   = local.deployment_circuit_breaker.enabled
     rollback = local.deployment_circuit_breaker.rollback
@@ -92,7 +91,8 @@ resource "aws_ecs_service" "ecs_service" {
       task_definition,
       desired_count,
       launch_type,
-      load_balancer
+      load_balancer,
+      network_configuration
     ]
   }
 
