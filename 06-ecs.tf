@@ -69,7 +69,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   network_configuration {
     subnets          = local.subnet_ids
-    security_groups  = local.security_group_ids
+    security_groups  = merge(local.security_group_ids, [aws_security_group.ecs_task.id])
     assign_public_ip = local.assign_public_ip
   }
 
@@ -97,6 +97,40 @@ resource "aws_ecs_service" "ecs_service" {
     Description = "ECS service for ${local.service_name}"
   })
 }
+
+######################
+# ECS Security Group #
+######################
+
+resource "aws_security_group" "ecs_task" {
+  name        = "${local.service_name}-ecs-task-sg"
+  description = "Security group for EC2 instances in ECS cluster"
+  vpc_id      = local.vpc_id
+
+  ingress {
+    description     = "Allow ingress traffic from ALB on HTTP on ephemeral ports"
+    from_port       = 1024
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [local.alb_security_group_id, aws_security_group.ec2.id]
+  }
+
+  egress {
+    description = "Allow all egress traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags,
+    {
+      Name        = "${local.service_name}-ecs-task-sg"
+      Description = "Security group for ECS task in ECS cluster"
+    }
+  )
+}
+
 
 ########################
 # ECS Task Definitions #
