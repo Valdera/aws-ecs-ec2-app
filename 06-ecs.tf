@@ -69,7 +69,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   network_configuration {
     subnets          = local.subnet_ids
-    security_groups  = merge(local.security_group_ids, [aws_security_group.ecs_task.id])
+    security_groups  = concat(local.security_group_ids, [aws_security_group.ecs_task.id])
     assign_public_ip = local.assign_public_ip
   }
 
