@@ -63,6 +63,11 @@ output "ecs_task_definition_arn" {
   description = "The ARN of the ECS task definition"
 }
 
+output "ecs_task_sg_id" {
+  value       = aws_security_group.ecs_task.id
+  description = "The security group ID for the ECS task"
+}
+
 output "ecs_service_name" {
   value       = aws_ecs_service.ecs_service.name
   description = "The name of the ECS service"
