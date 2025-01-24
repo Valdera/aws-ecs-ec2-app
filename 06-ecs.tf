@@ -108,7 +108,7 @@ resource "aws_ecs_service" "ecs_service" {
 
 resource "aws_security_group" "ecs_task" {
   name        = "${local.service_name}-ecs-task-sg"
-  description = "Security group for EC2 instances in ECS cluster"
+  description = "Security group for ECS task"
   vpc_id      = local.vpc_id
 
   ingress {

@@ -30,6 +30,12 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
     strategy = "Rolling"
   }
 
+  tag {
+    key                 = "Name"
+    value               = local.service_name
+    propagate_at_launch = true
+  }
+
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
